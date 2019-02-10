@@ -9,14 +9,14 @@ const SECRET = "mysecret";
 // token: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthaSJ9.dl7Jw1kZV2oNJt8vKJ53iWW-OwXSV23f7LRueOtZAtI
 passport.use(
   new BearerStrategy((token, done) => {
-    console.log("token: " + token);
+    console.log("__1 token: " + token);
     try {
       const { username } = jwt.decode(token, SECRET);
-      console.log("username: " + username);
+      console.log("__2 username: " + username);
 
       if (username === "Kai") {
         done(null, username);
-        console.log("success ");
+        console.log("__3 success ");
         return;
       }
       console.log("failure ");
@@ -39,7 +39,6 @@ router.get(
 
 router.get("/getToken", (req, res) => {
   res.json({
-    theToken: "isHere",
     bearer:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthaSJ9.DfjEVEOVY60MSRX7h1iBKnc83T5ASzoD2ZsI3RjfpIo"
   });
