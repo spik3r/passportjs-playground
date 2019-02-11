@@ -1,8 +1,34 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const NodeCache = require( "node-cache" );
+const cache = new NodeCache( { stdTTL: 20 });
 
-axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthaSJ9.DfjEVEOVY60MSRX7h1iBKnc83T5ASzoD2ZsI3RjfpIo'; // for all requests
+// this works
+// axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthaSJ9.DfjEVEOVY60MSRX7h1iBKnc83T5ASzoD2ZsI3RjfpIo'; // for all requests
+
+
+
+const getTokenFromCache = async () => {
+  const token = cache.get('token');
+  if (token) {
+    console.log('Valid token found in cache.');
+    return token;
+  } else {
+    console.log('No valid token found in cache');
+    const newToken = await getToken();
+    cache.set('token', newToken);
+    return newToken;
+  }
+};
+
+// still trying to get this to work
+const setToken = async () => {
+  const authToken = await getTokenFromCache();
+  axios.defaults.headers.common['Authorization'] = authToken;
+};
+
+setToken();
 
 // const config = {
 //   headers: {
@@ -18,6 +44,7 @@ router.get("/addBearerToken", (req, res) => {
   res.json({ message: "addBearerToken"});
 
 });
+
 
 const getInfo = async () => {
   const config = await getConfig();
