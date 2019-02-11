@@ -4,13 +4,21 @@ const axios = require("axios");
 const NodeCache = require( "node-cache" );
 const cache = new NodeCache( { stdTTL: 20 });
 
-const getToken = async () => {
-  return axios.get("http://localhost:3000/api/getToken");
+const config = {
+  header: {
+    Authorization: `Basic header-goes-here`
+  }
+};
+
+const getToken = async (authServerUrl, tokenName) => {
+
+  const response = await axios.get(authServerUrl, config);
+  return response.data[tokenName];
 };
 
 
 const createConfig = async (token) => {
-    console.log("2. The token from String:    "+ `Bearer ${token}`);
+    console.log("2. The token:    "+ `Bearer ${token}`);
     return {
       headers: {
         Authorization: `Bearer ${token}`
@@ -38,10 +46,11 @@ const getTokenFromCache = async () => {
     return token;
   } else {
     console.log('No valid token found in cache. Getting new Token from auth service.');
-    const newToken = await getToken();
-    console.log(newToken.data.bearer);
-    cache.set('token', newToken.data.bearer);
-    return newToken.data.bearer;
+
+    const newToken = await getToken('http://localhost:3000/api/getToken', 'bearer');
+    console.log(newToken);
+    cache.set('token', newToken);
+    return newToken;
   }
 };
 
