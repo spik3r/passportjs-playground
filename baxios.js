@@ -17,10 +17,16 @@ const getTokenFromCache = async () => {
   } else {
     console.log('No valid token found in cache');
     const newToken = await getToken();
-    cache.set('token', newToken);
+    console.log("_______");
+    console.log(newToken.data.bearer);
+    console.log("_______");
+    cache.set('bearer', newToken.data.bearer);
     return newToken;
   }
-};
+
+
+
+}
 
 // still trying to get this to work
 const setToken = async () => {
@@ -28,7 +34,7 @@ const setToken = async () => {
   axios.defaults.headers.common['Authorization'] = authToken;
 };
 
-setToken();
+
 
 // const config = {
 //   headers: {
@@ -162,8 +168,10 @@ const getSecretWithAuth = () => {
 
 
 // with bearer token
-router.get("/auth", (req, res) => {
+router.get("/auth", async  (req, res) => {
   console.log("/user/auth called");
+  await setToken();
+  console.log(" called setToken");
   getSecretWithAuth()
     .then(data => {
       res.json({ message: "Request received!", data });

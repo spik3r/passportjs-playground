@@ -32,7 +32,7 @@ router.get(
   "/",
   passport.authenticate("bearer", { session: false }),
   (req, res) => {
-    console.table(req);
+    //console.table(req);
     res.json({ SecretData: "superSecret info abc123 = $$$ to the moon" });
   }
 );
